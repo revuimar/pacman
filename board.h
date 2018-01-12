@@ -1,36 +1,70 @@
 #ifndef BOARD_H
 #define BOARD_H
 #include <QWidget>
-#include <QFrame>
-class Board : public QFrame
+#include <vector>
+#include <QGraphicsScene>
+#include <QGraphicsView>
+#include <QBrush>
+#include <QPen>
+#include <QWidget>
+#include "particle.h"
+class Particle;
+class Board : public QGraphicsView
 {
-    Q_OBJECT
-
 public:
-    Board(QWidget *parent = 0);
-
+    Board(QWidget* parent= 0);
+    QGraphicsView* view;
+    QGraphicsScene* scene;
+    enum { BoardWidth = 28, BoardHeight = 31};
+    void deleteItem(int posx,int posy);
+    void drawBoard();
 public slots:
-    //void start();
-    //void pause();
+    void setShape(Shape shape);
+    void setPen(const QPen &pen);
+    void setBrush(const QBrush &brush);
 
-signals:
-    void scoreChanged(int score);
-    void levelChanged(int level);
 private:
-    enum { BoardWidth = 28, BoardHeight = 22};
-    /*
-    enum { PacMan_posx, PacMan_posy};
-    enum { Pinky_posx, Pinky_posy}; // pink 4 tiles ahead of pacman
-    enum { Blinky_posx, Blinky_posy};//always chases pacman
-    enum { Inky_posx, Inky_posy}; // blue chases after eating 30 dots 2 of vector from blinky position to 2 tiles ahead of pacman
-    enum { Clyde_posx, Clyde_posy};//orange leaves house after pacman eating 3 dots when further than 8 tiles from pacman he has blinky mode else he tries to reach left bottom corner
-    */
-    int tileWidth(){return contentsRect().width()/BoardWidth;}
-    int tileHeight(){return contentsRect().height()/BoardHeight;}
-    bool isStarted;
-    bool isPaused;
-
-
+    Particle* item;
+    Shape shape;
+    QPen pen;
+    QBrush brush;
+    std::vector<std::vector<int> > boardMap ={
+        {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+        {1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {1,0,1,1,1,1,0,1,1,1,1,1,0,1,1,0,1,1,1,1,1,0,1,1,1,1,0,1},
+        {1,4,1,9,9,1,0,1,9,9,9,1,0,1,1,0,1,9,9,9,1,0,1,9,9,1,4,1},
+        {1,0,1,1,1,1,0,1,1,1,1,1,0,1,1,0,1,1,1,1,1,0,1,1,1,1,0,1},
+        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {1,0,1,1,1,1,0,1,1,0,1,1,1,1,1,1,1,1,0,1,1,0,1,1,1,1,0,1},
+        {1,0,1,1,1,1,0,1,1,0,1,1,1,1,1,1,1,1,0,1,1,0,1,1,1,1,0,1},
+        {1,0,0,0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,0,0,1},
+        {1,1,1,1,1,1,0,1,1,1,1,1,9,1,1,9,1,1,1,1,1,0,1,1,1,1,1,1},
+        {9,9,9,9,9,1,0,1,1,1,1,1,9,1,1,9,1,1,1,1,1,0,1,9,9,9,9,9},
+        {9,9,9,9,9,1,0,1,1,9,9,9,9,9,9,9,9,9,9,1,1,0,1,9,9,9,9,9},
+        {9,9,9,9,9,1,0,1,1,9,1,1,1,3,3,1,1,1,9,1,1,0,1,9,9,9,9,9},
+        {1,1,1,1,1,1,0,1,1,9,1,9,9,9,9,9,9,1,9,1,1,0,1,1,1,1,1,1},
+        {2,9,9,9,9,9,0,9,9,9,1,9,9,9,9,9,9,1,9,9,9,0,9,9,9,9,9,2},
+        {1,1,1,1,1,1,0,1,1,9,1,9,9,9,9,9,9,1,9,1,1,0,1,1,1,1,1,1},
+        {1,1,1,1,1,1,0,1,1,9,1,1,1,1,1,1,1,1,9,1,1,0,1,1,1,1,1,1},
+        {1,1,1,1,1,1,0,1,1,9,9,9,9,9,9,9,9,9,9,1,1,0,1,1,1,1,1,1},
+        {1,1,1,1,1,1,0,1,1,9,1,1,1,1,1,1,1,1,9,1,1,0,1,1,1,1,1,1},
+        {1,1,1,1,1,1,0,1,1,9,1,1,1,1,1,1,1,1,9,1,1,0,1,1,1,1,1,1},
+        {1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {1,0,1,1,1,1,0,1,1,1,1,1,0,1,1,0,1,1,1,1,1,0,1,1,1,1,0,1},
+        {1,0,1,1,1,1,0,1,1,1,1,1,0,1,1,0,1,1,1,1,1,0,1,1,1,1,0,1},
+        {1,4,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,4,1},
+        {1,1,1,0,1,1,0,1,1,0,1,1,1,1,1,1,1,1,0,1,1,0,1,1,0,1,1,1},
+        {1,1,1,0,1,1,0,1,1,0,1,1,1,1,1,1,1,1,0,1,1,0,1,1,0,1,1,1},
+        {1,0,0,0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,0,0,1},
+        {1,0,1,1,1,1,1,1,1,1,1,1,0,1,1,0,1,1,1,1,1,1,1,1,1,1,0,1},
+        {1,0,1,1,1,1,1,1,1,1,1,1,0,1,1,0,1,1,1,1,1,1,1,1,1,1,0,1},
+        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}};
+        //0-empty
+        //1-wall
+        //2-portal
+        //3-ghost door
+    QVector< QVector<Particle*> > map;
 };
 
 

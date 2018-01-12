@@ -14,9 +14,12 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    board.cpp
+    board.cpp \
+    particle.cpp
 
 HEADERS  += mainwindow.h \
-    board.h
+    board.h \
+    particle.h
 
 FORMS    += mainwindow.ui
+CONFIG += c++11

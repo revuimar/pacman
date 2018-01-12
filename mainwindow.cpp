@@ -3,6 +3,10 @@
 #include <QCoreApplication>
 #include <QStackedLayout>
 #include <QMessageBox>
+#include <iostream>
+#include <QRect>
+#include <QGraphicsRectItem>
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -10,7 +14,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     connect(ui->quitButton, SIGNAL (released()), this, SLOT (handleQuit()));
     connect(ui->quitButton3, SIGNAL (released()), this, SLOT (handleQuit()));
-
+    //std::cerr << "xd";
     connect(ui->quitButton2, SIGNAL (released()), this, SLOT (handleQuitToMenu()));
     connect(ui->mainMenuButton, SIGNAL (released()), this, SLOT (handleQuitToMenu()));
     connect(ui->startButton, SIGNAL(released()), this, SLOT(handleStart()));

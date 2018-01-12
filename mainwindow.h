@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QPushButton>
+#include <QGraphicsScene>
 
 namespace Ui {
 class MainWindow;
@@ -21,6 +22,7 @@ private slots:
     void handleQuitToMenu();
     void handlePause();
 private:
+    QGraphicsScene* scene;
     Ui::MainWindow *ui;
 };
 
