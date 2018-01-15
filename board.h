@@ -7,6 +7,8 @@
 #include <QBrush>
 #include <QPen>
 #include <QWidget>
+#include <QBasicTimer>
+#include <QKeyEvent>
 #include "particle.h"
 class Particle;
 class Board : public QGraphicsView
@@ -16,18 +18,30 @@ public:
     QGraphicsView* view;
     QGraphicsScene* scene;
     enum { BoardWidth = 28, BoardHeight = 31};
-    void deleteItem(int posx,int posy);
-    void drawBoard();
-public slots:
-    void setShape(Shape shape);
-    void setPen(const QPen &pen);
-    void setBrush(const QBrush &brush);
+    enum Direction {UP,DOWN,LEFT,RIGHT};
 
+public slots:
+    void start();
+    void pause();
+signals:
+    void scoreChanged(int score);
+    void levelChanged(int level);
+    void deleteItem(int posx,int posy);
 private:
+
+    int timeoutTime() { return 10; }
+    Direction direction;
+    void drawBoard();
+    void timerEvent(QTimerEvent* event);
+    void keyPressEvent(QKeyEvent *event);
     Particle* item;
-    Shape shape;
-    QPen pen;
-    QBrush brush;
+    Particle* pacman;
+    bool isStarted;
+    bool isPaused;
+    bool nextEvent;
+    int score;
+    QBasicTimer timer;
+    void tryMove();
     std::vector<std::vector<int> > boardMap ={
         {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
         {1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1},
@@ -52,7 +66,7 @@ private:
         {1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1},
         {1,0,1,1,1,1,0,1,1,1,1,1,0,1,1,0,1,1,1,1,1,0,1,1,1,1,0,1},
         {1,0,1,1,1,1,0,1,1,1,1,1,0,1,1,0,1,1,1,1,1,0,1,1,1,1,0,1},
-        {1,4,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,4,1},
+        {1,4,0,0,1,1,0,0,0,0,0,0,0,5,0,0,0,0,0,0,0,0,1,1,0,0,4,1},
         {1,1,1,0,1,1,0,1,1,0,1,1,1,1,1,1,1,1,0,1,1,0,1,1,0,1,1,1},
         {1,1,1,0,1,1,0,1,1,0,1,1,1,1,1,1,1,1,0,1,1,0,1,1,0,1,1,1},
         {1,0,0,0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,0,0,1},
