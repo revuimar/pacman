@@ -15,11 +15,17 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     board.cpp \
-    particle.cpp
+    particle.cpp \
+    pacman.cpp \
+    wall.cpp \
+    ghost.cpp
 
 HEADERS  += mainwindow.h \
     board.h \
-    particle.h
+    particle.h \
+    pacman.h \
+    wall.h \
+    ghost.h
 
 FORMS    += mainwindow.ui
 CONFIG += c++11

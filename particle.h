@@ -8,11 +8,10 @@ class Board;
 class Particle:public QGraphicsRectItem
 {
 public:
-    enum Shape {Rect,Dot,PacDot,PacMan};
+    enum Shape {Rect,Dot,PacDot};
 private:
     Board* parent;
     QRectF rect;
-
     Shape shape;
 public:
     Particle(int posx,int posy,Shape chosen, Board* parent = 0);

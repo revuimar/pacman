@@ -26,10 +26,6 @@ void Particle::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
         rect.setRect(rect.center().x()-2.5,rect.center().y()-2.5,5,5);
         painter->drawEllipse(rect);
         break;
-    case PacMan:
-        painter->setBrush(QBrush(QColor("yellow")));
-        painter->drawEllipse(rect);
-        break;
     case PacDot:
         painter->setBrush(QBrush(QColor("orange")));
         rect.setRect(rect.center().x()-5,rect.center().y()-5,10,10);
@@ -66,25 +62,25 @@ bool Particle::isTherePellet(Particle* object)
 }
 int Particle::PosLeft()
 {
-    return ((rect.left()+x()));
+    return (static_cast<int>(rect.left()+x()));
 }
 int Particle::PosTop()
 {
-    return ((rect.top()+y()));
+    return (static_cast<int>(rect.top()+y()));
 }
 int Particle::PosBottom()
 {
-    return ((rect.bottom()+y()));
+    return (static_cast<int>(rect.bottom()+y()));
 }
 int Particle::PosRight()
 {
-    return ((rect.right()+x()));
+    return (static_cast<int>(rect.right()+x()));
 }
 int Particle::PosXID()
 {
-    return floor((rect.center().x()+x()));
+    return floor(static_cast<int>(rect.center().x()+x())/20);
 }
 int Particle::PosYID()
 {
-    return floor((rect.center().y()+y()));
+    return floor(static_cast<int>(rect.center().y()+y())/20);
 }

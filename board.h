@@ -10,13 +10,21 @@
 #include <QBasicTimer>
 #include <QKeyEvent>
 #include "particle.h"
+#include "pacman.h"
+#include "wall.h"
 class Particle;
+class Pacman;
+class Wall;
 class Board : public QGraphicsView
 {
+    Q_OBJECT
+
+    QTimer *hightimer;
 public:
     Board(QWidget* parent= 0);
     QGraphicsView* view;
     QGraphicsScene* scene;
+
     enum { BoardWidth = 28, BoardHeight = 31};
     enum Direction {UP,DOWN,LEFT,RIGHT};
 
@@ -26,22 +34,27 @@ public slots:
 signals:
     void scoreChanged(int score);
     void levelChanged(int level);
-    void deleteItem(int posx,int posy);
-private:
 
+private slots:
+    void tryMove();
+private:
+    void deleteItem(int posx,int posy);
     int timeoutTime() { return 10; }
     Direction direction;
     void drawBoard();
     void timerEvent(QTimerEvent* event);
     void keyPressEvent(QKeyEvent *event);
+    bool isCollision();
+    bool pacmanOnTrackX();
+    bool pacmanOnTrackY();
     Particle* item;
-    Particle* pacman;
+    Pacman* pacman;
     bool isStarted;
     bool isPaused;
     bool nextEvent;
     int score;
     QBasicTimer timer;
-    void tryMove();
+
     std::vector<std::vector<int> > boardMap ={
         {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
         {1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1},
@@ -79,6 +92,7 @@ private:
         //2-portal
         //3-ghost door
     QVector< QVector<Particle*> > map;
+    QVector< QVector<Wall*>> wallMap;
 };
 
 
