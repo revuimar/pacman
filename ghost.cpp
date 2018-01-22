@@ -150,6 +150,24 @@ bool Ghost::isCollision()
     }
     return false;
 }
+void Ghost::CollisionWithPacman()
+{
+    if(parent->pacman->PosXID() == PosXID() && parent->pacman->PosYID() == PosYID())
+    {
+        if(isScatter()){
+            parent->score += 200;
+            emit parent->scoreChanged(parent->score);
+            setPos(0,0);
+            outOfTheHouse = true;
+            return;
+        }
+        else
+        {
+            parent->pause();
+            emit parent->gameOver(2);
+        }
+    }
+}
 
 void Ghost::tryMoveGhost()
 {
@@ -183,6 +201,8 @@ void Ghost::tryMoveGhost()
             previousDir = Up;
         direction = Pending;
     }
+    CollisionWithPacman();
+    scatterMode = parent->pacman->canIEat;
 }
 void Ghost::paint(QPainter *painter, const QStyleOptionGraphicsItem* /* unused */, QWidget* /* unused */)
 {
@@ -191,22 +211,26 @@ void Ghost::paint(QPainter *painter, const QStyleOptionGraphicsItem* /* unused *
     path.lineTo(rect.bottomLeft());
     path.lineTo(rect.bottomRight());
     path.lineTo(rect.left() + (rect.width() / 2), rect.top());
-
-    switch (ghostName) {
-    case Red:
-        painter->fillPath(path,QBrush(QColor("red")));
-        break;
-    case Pink:
-        painter->fillPath(path,QBrush(QColor("pink")));
-        break;
-    case Cyan:
-        painter->fillPath(path,QBrush(QColor("cyan")));
-        break;
-    case Orange:
-        painter->fillPath(path,QBrush(QColor("orange")));
-        break;
-    default:
-        break;
+    if(!scatterMode){
+        switch (ghostName) {
+        case Red:
+            painter->fillPath(path,QBrush(QColor("red")));
+            break;
+        case Pink:
+            painter->fillPath(path,QBrush(QColor("pink")));
+            break;
+        case Cyan:
+            painter->fillPath(path,QBrush(QColor("cyan")));
+            break;
+        case Orange:
+            painter->fillPath(path,QBrush(QColor("orange")));
+            break;
+        default:
+            break;
+        }
+    }
+    else{
+        painter->fillPath(path,QBrush(QColor("blue")));
     }
 }
 

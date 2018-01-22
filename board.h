@@ -38,6 +38,7 @@ public slots:
     void start();
     void pause();
 signals:
+    void gameOver(int index);
     void scoreChanged(int score);
     void levelChanged(int level);
 private:

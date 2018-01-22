@@ -19,6 +19,7 @@
 
 Board::Board(QWidget *parent): QGraphicsView(parent)
 {
+
     isPaused = false;
     isStarted = false;
     score = 0;
@@ -93,8 +94,8 @@ void Board::start()
     score = 0;
 
     drawBoard();
-    hightimer = new QTimer(this);
-    hightimer->start();
+    emit scoreChanged(score);
+
     timer.start(timeoutTime(), this);
 }
 

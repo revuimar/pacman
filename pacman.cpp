@@ -1,11 +1,14 @@
 #include "pacman.h"
 #include "ui_mainwindow.h"
 #include "board.h"
+#include <QApplication>
 #include <QPen>
 #include <QSize>
 #include <QBrush>
 #include <QRect>
 #include <QPainter>
+#include <QTimer>
+#include <iostream>
 
 Pacman::Pacman(int posx, int posy, Board* parent)
     :QGraphicsRectItem(posx,posy,PACMAN_WIDTH,PACMAN_HEIGHT)
@@ -14,6 +17,12 @@ Pacman::Pacman(int posx, int posy, Board* parent)
     rect = QRect(posx,posy,PACMAN_WIDTH,PACMAN_HEIGHT);
     direction = NONE;
     nextDirection = NONE;
+    canIEat = false;
+
+    t = new QTimer();
+    t->setInterval(5000);
+
+    connect(t,SIGNAL(timeout()),this,SLOT(reset()));
 }
 void Pacman::paint(QPainter *painter, const QStyleOptionGraphicsItem* /* unused */, QWidget* /* unused */)
 {
@@ -61,6 +70,8 @@ void Pacman::tryMove()
             parent->deleteItem(PosXID(),PosYID());
             parent->score+=50;
             emit parent->scoreChanged(parent->score);
+            canIEat = true;
+            t->start();
         }
 
 }
@@ -114,6 +125,10 @@ void Pacman::determineMove(Direction selectedDir)
         nextDirection = NONE;
     }
 
+}
+void Pacman::reset() {
+    canIEat = false;
+    t->stop();
 }
 
 bool Pacman::pacmanOnTrackX()

@@ -19,10 +19,11 @@ public:
     ghostMoves previousDir;
     QRectF rect;
     bool outOfTheHouse;
+    bool scatterMode;
 private:
     Board* parent;
 
-    bool scatterMode;
+
     bool isDead;
     aiType ghostName;
     bool isCollision();
@@ -46,6 +47,7 @@ public:
     QVector<QPoint> possibleMoves();
     bool isGhostDead(){return isDead;}
     bool isScatter(){return scatterMode;}
+    void CollisionWithPacman();
     QPoint home(){return QPoint(14,14);}
     virtual QPoint ghostDestination(){return QPoint(0,0);}
 };

@@ -18,7 +18,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->mainMenuButton, SIGNAL (released()), this, SLOT (handleQuitToMenu()));
     connect(ui->startButton, SIGNAL(released()), this, SLOT(handleStart()));
     connect(ui->pauseButton, SIGNAL (released()), this, SLOT (handlePause()));
-    connect(ui->lcdNumber_2, SIGNAL(scoreChanged(int)), this, SLOT(display(int)));
+    connect(ui->board, SIGNAL(scoreChanged(int)), ui->lcdNumber_2, SLOT(display(int)));
+    connect(ui->board, SIGNAL(scoreChanged(int)), ui->lcdNumber, SLOT(display(int)));
+    connect(ui->board, SIGNAL(scoreChanged(int)), ui->lcdNumber_3, SLOT(display(int)));
+    connect(ui->board, SIGNAL(gameOver(int)), ui->stackedWidget, SLOT(setCurrentIndex(int)));
     ui->stackedWidget->setCurrentIndex(0);
 }
 
@@ -35,6 +38,9 @@ void MainWindow::handleQuit()
 void MainWindow::handleQuitToMenu()
 {
     ui->stackedWidget->setCurrentIndex(0);
+    ui->board->pause();
+    ui->board->close();
+
 }
 void MainWindow::handleStart()
 {
