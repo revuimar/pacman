@@ -3,6 +3,10 @@
 #include "particle.h"
 #include "pacman.h"
 #include "wall.h"
+#include "blinky.h"
+#include "inky.h"
+#include "pinky.h"
+#include "clyde.h"
 #include <QCoreApplication>
 #include <QWidget>
 #include <QTimer>
@@ -15,11 +19,9 @@
 
 Board::Board(QWidget *parent): QGraphicsView(parent)
 {
-
     isPaused = false;
     isStarted = false;
-
-    start();
+    score = 0;
 }
 void Board::drawBoard()
 {
@@ -39,6 +41,18 @@ void Board::drawBoard()
             case 5:
                 item = nullptr;
                 pacman = new Pacman(x*20,y*20,this);
+                break;
+            case 6:
+                item = nullptr;
+                ghostContainer.push_back(new Inky(x*20,y*20,this));
+                break;
+            case 7:
+                item = nullptr;
+                ghostContainer.push_back(new Pinky(x*20,y*20,this));
+                break;
+            case 8:
+                item = nullptr;
+                ghostContainer.push_back(new Clyde(x*20,y*20,this));
                 break;
             default:
                 item = nullptr;
@@ -60,15 +74,15 @@ void Board::drawBoard()
             scene->addItem(j);
         }
     }
+    ghostContainer.push_back(new Blinky(14*20,11*20,this));
+    for(auto i : ghostContainer) {
+            scene->addItem(i);
+    }
     scene->addItem(pacman);
 }
 void Board::deleteItem(int posx, int posy){
     delete map.at(posy).at(posx);
     map[posy].replace(posx,nullptr);
-}
-void Board::timerEvent(QTimerEvent *event)
-{
-    QWidget::timerEvent(event);
 }
 
 void Board::start()
@@ -97,139 +111,39 @@ void Board::pause()
     }
     update();
 }
-void Board::tryMove()
+void Board::timerEvent(QTimerEvent *event)
 {
-    bool wallNotColided = true;
-        switch (direction) {
-        case LEFT:
-            pacman->moveBy(-5,0);
-            if(isCollision())
-            {
-                pacman->moveBy(5,0);
-                wallNotColided = false;
-                nextEvent = false;
-            }
-            break;
-        case RIGHT:
-            pacman->moveBy(5,0);
-            if(isCollision()){
-                pacman->moveBy(-5,0);
-                wallNotColided = false;
-                nextEvent = false;
-            }
-            break;
-        case UP:
-            pacman->moveBy(0,-5);
-            if(isCollision()){
-                pacman->moveBy(0,5);
-                wallNotColided = false;
-                nextEvent = false;
-            }
-            break;
-        case DOWN:
-            pacman->moveBy(0,5);
-            if(isCollision()){
-                pacman->moveBy(0,-5);
-                wallNotColided = false;
-                nextEvent = false;
-            }
-            break;
-        default:
-            break;
-        }
-        if(Particle::isThereDot(map.at(pacman->PosYID()).at(pacman->PosXID()))){
-            deleteItem(pacman->PosXID(),pacman->PosYID());
-            score+=10;
-        }
-        if(Particle::isTherePellet(map.at(pacman->PosYID()).at(pacman->PosXID()))){
-            deleteItem(pacman->PosXID(),pacman->PosYID());
-            score+=50;
-        }
-        repaint();
-
+    pacman->tryMove();
+    ghostContainer.at(0)->tryMoveGhost();
+    ghostContainer.at(1)->tryMoveGhost();
+    ghostContainer.at(2)->tryMoveGhost();
+    ghostContainer.at(3)->tryMoveGhost();
+    timer.start(100,this);
+    QWidget::timerEvent(event);
 }
-bool Board::isCollision()
-{
-    int pacmanXID = pacman->PosXID();
-    int pacmanYID = pacman->PosYID();
-        switch(direction){
-            case LEFT:
-                if(!pacmanOnTrackX()) return true;
-                if(wallMap.at(pacmanYID).at(pacmanXID-1)->isHereMapBoundary())
-                {
-                    if(pacman->PosLeft() < wallMap.at(pacmanYID).at(pacmanXID-1)->PosRight()){
-                        return true;
-                    }
-                }
-                return false;
-            case RIGHT:
-                if(!pacmanOnTrackX()) return true;
-                if(wallMap.at(pacmanYID).at(pacmanXID+1)->isHereMapBoundary())
-                {
-                    if(pacman->PosRight() > wallMap.at(pacmanYID).at(pacmanXID+1)->PosLeft()){
-                        return true;
-                    }
-                }
-                return false;
-            case UP:
-                if(!pacmanOnTrackY()) return true;
-                if(wallMap.at(pacmanYID-1).at(pacmanXID)->isHereMapBoundary())
-                {
-                    if(pacman->PosTop() < wallMap.at(pacmanYID-1).at(pacmanXID)->PosBottom()){
-                        return true;
-                    }
-                }
-                return false;
-            case DOWN:
-                if(!pacmanOnTrackY()) return true;
-                if(wallMap.at(pacmanYID+1).at(pacmanXID)->isHereMapBoundary())
-                {
-                    if(pacman->PosBottom() > wallMap.at(pacmanYID+1).at(pacmanXID)->PosTop()){
-                        return true;
-                    }
-                }
-                return false;
-            default: break;
-        }
-    return false;
-}
-bool Board::pacmanOnTrackX()
-{
-    return pacman->PosTop()%20 == 0;
-}
-bool Board::pacmanOnTrackY()
-{
-    return pacman->PosLeft()%20 == 0;
-}
-
 void Board::keyPressEvent(QKeyEvent *event)
 {
     if (!isStarted || isPaused) {
         QWidget::keyPressEvent(event);
         return;
     }
-
     switch (event->key()) {
     case Qt::Key_Left:
-        direction = LEFT;
-        nextEvent = true;
+        pacman->determineMove(Pacman::LEFT);
         break;
     case Qt::Key_Right:
-        direction = RIGHT;
-        nextEvent = true;
+        pacman->determineMove(Pacman::RIGHT);
         break;
     case Qt::Key_Down:
-        direction = DOWN;
-        nextEvent = true;
+        pacman->determineMove(Pacman::DOWN);
         break;
     case Qt::Key_Up:
-        direction = UP;
-        nextEvent = true;
-
+        pacman->determineMove(Pacman::UP);
         break;
     default:
         QWidget::keyPressEvent(event);
     }
-    tryMove();
 
 }
+
+

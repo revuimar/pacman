@@ -8,15 +8,23 @@
 #include <QPainter>
 #include <QDebug>
 #include <QVector>
-Wall::Wall(int posx, int posy, Board* parent)
-    :QGraphicsRectItem(posx,posy,WALL_WIDTH,WALL_HEIGHT)
+Wall::Wall(int posx, int posy,wallType chosenWallType, Board* parent)
+    :QGraphicsRectItem(posx,posy,WALL_WIDTH,WALL_HEIGHT), wallsType(chosenWallType)
 {
     this->parent = parent;
     rect = QRect(posx,posy,20,20);
 }
-void Wall::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void Wall::paint(QPainter *painter, const QStyleOptionGraphicsItem* /* unused */, QWidget* /* unused */)
 {
-    painter->setBrush(QBrush(QColor("blue")));
+    switch(wallsType){
+        case HOUSE:
+            painter->setBrush(QBrush(QColor("green")));
+            break;
+        case WALL:
+            painter->setBrush(QBrush(QColor("blue")));
+            break;
+        default: break;
+    }
     painter->drawRect(rect);
 }
 
@@ -30,7 +38,11 @@ QVector<QVector<Wall*>> Wall::wallInitialiser(std::vector<std::vector<int>>* bas
         {
             if(baseMap->at(y).at(x) == 1)
             {
-                map[y].push_back(new Wall(x*WALL_WIDTH,y*WALL_HEIGHT,parent));
+                map[y].push_back(new Wall(x*WALL_WIDTH,y*WALL_HEIGHT,WALL,parent));
+            }
+            else if(baseMap->at(y).at(x) == 3)
+            {
+                map[y].push_back(new Wall(x*WALL_WIDTH,y*WALL_HEIGHT,HOUSE,parent));
             }
             else
             {

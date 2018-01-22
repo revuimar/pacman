@@ -18,14 +18,22 @@ SOURCES += main.cpp\
     particle.cpp \
     pacman.cpp \
     wall.cpp \
-    ghost.cpp
+    ghost.cpp \
+    blinky.cpp \
+    inky.cpp \
+    pinky.cpp \
+    clyde.cpp
 
 HEADERS  += mainwindow.h \
     board.h \
     particle.h \
     pacman.h \
     wall.h \
-    ghost.h
+    ghost.h \
+    blinky.h \
+    inky.h \
+    pinky.h \
+    clyde.h
 
 FORMS    += mainwindow.ui
 CONFIG += c++11

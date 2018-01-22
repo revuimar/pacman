@@ -15,6 +15,15 @@ public:
     void paint(QPainter * painter,
                    const QStyleOptionGraphicsItem * option,
                    QWidget * widget);
+    void tryMove();
+
+    enum Direction {UP,DOWN,LEFT,RIGHT,NONE};
+    Direction direction;
+    Direction nextDirection;
+    void determineMove(Direction selected);
+    bool pacmanOnTrackX();
+    bool pacmanOnTrackY();
+    bool isCollision(Direction selected);
     int PosTop();
     int PosBottom();
     int PosLeft();
